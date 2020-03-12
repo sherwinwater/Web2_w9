@@ -1,0 +1,156 @@
+<!DOCTYPE HTML>
+<!-- PHP Form Input -->
+<html>
+<head>
+<title>SYST10199 PHP Form Input</title>
+<script type="text/javascript" src="../_scripts/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="../_scripts/syst10199scripts.js"></script>
+<link rel="stylesheet" type="text/css" href="../_css/SYST10199_module.css" />
+<link rel="stylesheet" media="print" href="../_css/SYST10199_print.css" />
+
+<meta charset="UTF-8" />
+<style type="text/css">
+</style>
+</head>
+<body>
+<div id="title">SYST10199 Server-Side Scripting</div>
+<div class="outline">
+	<p class="subtitle">Input-Processing-Output (IPO)...</p>
+    <ul>
+    <li><strong>Input-Processing-Output with PHP Programs</strong></li>
+    The Input-Processing-Output model is the simplest model of computer software:
+    <ul><li>
+    A user provides <strong>input</strong> data which is <strong>processed</strong> by the program and then the results of that processing are sent as <strong>output</strong> back to the user.</li>
+    <li>In simple PHP programs, the user input comes from a <em><strong>web form</strong></em> which submits to a PHP program, the processing is done in PHP and the output is an HTML page sent back to the client as an HTTP Response.  We can call this a <em>Two-Page IPO Architecure</em>.</li>
+    </ul><br>
+        
+    <li><strong>A Two-Page IPO Architecture</strong></li>
+    The simplest application of IPO for a web app is a two-page app.
+    <p>The <strong>first page</strong> contains a form (could be plain HTML or possibly a PHP file). This is the INPUT part.</p>
+    <p>When the form is submitted, the data from the form (i.e. the “parameters”) is sent to the <strong>second page</strong>, a PHP program PROCESS the inputs and OUTPUT the results.</p>
+    <img height=450px width=450px  src="../_images/php9-1.png" /><br><br>
+    The job of the PHP file is to:
+    <ol><li>Retrieve (and validate) the parameters.</li>
+            <li>Process the parameters and store the result temporarily.</li>
+            <li>Display the result.</li></ol><br>
+        <li><strong>Input (with HTML GET Parameters)</strong></li>
+        <ul><li>The most common way to get user input into a PHP program is through HTTP Request parameters, also known as GET and POST parameters (we will just use GET parameters for now). You can send HTTP Request parameters from HTML forms but as a quick starting point or for testing purposes you can also just type GET parameters directly into a URL.</li>
+        <li>The URL below contains a list of GET parameters (highlighted). The start of the list is signified by the ? character. The format is paramName=paramValue. If there is more than one parameter, they are separated by the & character.<br><br>
+        <ul class="codestyle">http://localhost/helloClient.php?<span style="color:red;">firstName=Andy</span>&<span style="color:red;">lastName=Pak</span></ul></li>
+        <p>This URL contains two GET parameters called firstName and lastName. They have the string values “Andy” and “Pak” respectively.</p>
+        This URL could have been generated automatically by the following form:<br><br>
+        <ul class="codestyle">&lt;form action="helloClient.php" method="GET"&gt;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;First Name:&lt;input type="text" <span style="color:red;">name="firstName"</span>&gt;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;Last Name:&lt;input type="text" <span style="color:red;">name="lastName"&gt;</span><br>
+	    &nbsp;&nbsp;&nbsp;&nbsp;&lt;input type="submit"&gt;<br>
+        &lt;/form&gt;</ul><br>
+            
+        <li id="w1ID" class="subtitlee"><strong>Sending Form Data to Server...</strong>
+        <img class="clickimage" src="../_images/click.png" />
+        <ul  class="clickinfo" id="w1info" style="font-weight:normal;"  >
+        <li>In a client-server web app, the form data usually get sent to the server. The <strong><span style="color:red;"> action attribute</span></strong> in the <scan class="codestyle">&lt;form&gt;</scan> tag specifies where the data will be sent.  (<span style="color:red;">Elements with name attribute will be sent.</span>) Attributes like required, min, max should be used if possible.<br><br>
+            <ul class="codestyle">&lt;form <strong><span style="color:red;">action="nextPage.php"</span></strong>&gt;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&lt;input type="number" <strong>name="streetNumber"</strong> required&gt;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&lt;input type="text" <strong>name="streetName"</strong> required&gt;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&lt;input type="submit"&gt;<br>
+            &lt;/form&gt;
+            </ul><br>
+        Now when the user presses the submit button, nextPage.php will load, and the data with name attributes will be sent.</li><br>
+        <li>In your <span class="codestyle">&lt;form&gt;</span> tag, you should also add a <strong><span style="color:red;">method attribute</span></strong>. You can use method<span class="codestyle">="GET"</span> or <span class="codestyle">method="POST"</span>.
+        <ul class="codestyle">
+        &lt;form <span style="color:red;">action="nextPage.php"</span> <strong><span style="color:red;">method="GET"&gt;</span></strong><br>
+	    &nbsp;&nbsp;&nbsp;&nbsp;&lt;input type="number" name="streetNum" required&gt;<br>
+	    &nbsp;&nbsp;&nbsp;&nbsp;&lt;input type="text" name="streetName" required&gt;<br>
+	    &nbsp;&nbsp;&nbsp;&nbsp;&lt;input type="submit"&gt;<br>
+        &lt;/form&gt; </ul>
+        </li><br>
+        <li><strong>GET</strong> vs <strong>POST</strong><br>
+        HTTP <strong>GET</strong> requests include all required data in the URL. In contrast, <strong>POST</strong> requests supply additional data from the client (browser) to the server in the message body.</li><br>
+        <li><strong>GET Parameters</strong></li>
+        If you use method<span class="codestyle">="GET"</span> you will see <strong>parameters</strong> as part of the URL.<br><br>
+        You can think of parameters almost like variables that have values assigned to them. In the above address the question mark is the start of the parameters, and "&" separates parameters.
+        <ul class="codestyle"><p>www.mywebsite.com/page.php?streetNum=10&streetName=Downing+Street</p></ul>
+        <p><strong>streetNum=10</strong>: The user typed 10 in the number field. streetNum is the parameter, and "10" is the value.</p>
+        <p><strong>streetName=Downing+Street</strong>: The user typed "Downing Street” in the text field. streetName is the parameter, and "Downing Street" is the value.</p>
+        <p>If you bookmark this page, the parameters will also be kept as part of the URL. Because the parameters are in the URL there is a limit on the amount of data in them.</p>
+        <li><strong>POST Parameters</strong></li>
+        If you use <span class="codestyle">method="POST"</span>, you will not see the parameters, they cannot be bookmarked, and there is no limit on the amount of data they can contain.
+        <p>POST is better than GET for sensitive information like passwords. But <strong>POST is still not secure!</strong> The password can still easily be read by anyone who intercepts the message.</p>
+        <strong>To secure your data properly you have to use the HTTPS protocol (not supported on our test server).</strong>
+        </ul>
+        </li><br>
+            
+        </ul>
+        <li><strong>Processing and Output (Using the Parameters in PHP)</strong></li>
+        A PHP script always has access to the GET parameters that came with the HTTP Request. They are stored in the <strong>superglobal</strong> associative array $_GET (note the underscore). In the above example, the helloClient.php program could access $_GET["firstName"] and $_GET["lastName"], in an echo statement like this:<br><br>
+        <ul class="codestyle">
+        echo "&lt;p&gt;Hello, Mr. {$_GET["lastName"]}. May I call you {$_GET["firstName"]}?&lt;/p&gt;";</ul><br>
+        Or using expression tags like this:<br><br>
+        <ul class="codestyle">
+        &lt;p&gt;Hello, Mr. &lt;?= $_GET["lastName"] ?&gt;. May I call you &lt;?= $_GET["firstName"] ?&gt;?&lt;/p&gt;</ul>
+        <p>If you load this program by typing its URL into a browser but fail to specify parameters in the URL, you can use the global boolean function isset() to detect it.</p>
+        <ul class="codestyle">if (<span style="color:red;">isset</span>($_GET["lastName"])) {<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;... do stuff ...<br>
+            }</ul><br>
+        <div>Let's run and examine the inputs and outputs of:
+        <ul><li><a href="helloClientUserInfo.html" target="_blank">helloClientUserInfo.html</a></li>
+        <li><a href="helloClient.php" target="_blank">helloClient.php</a></li>
+        <li><a href="helloClient2.php" target="_blank">helloClient2.php</a></li>
+        <li><a href="helloClient3.php" target="_blank">helloClient3.php</a></li>
+        </ul></div><br>
+        <li><strong>Numeric Parameters</strong></li>
+        If you’re expecting a number, you can use the is_numeric() function to make sure you got what you wanted.<br><br>
+	    <ul class="codestyle">if (isset($_GET["numHellos"]) and<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red;">is_numeric</span>($_GET["numHellos"]))<br>
+	   &nbsp;&nbsp;&nbsp;&nbsp;$n = $_GET["numHellos"];<br>
+	    else<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;$n = 1;</ul><br>
+        <li><strong>NOT RECOMMENDED: Alternating PHP and HTML</strong></li><br>
+        <ul class="codestyle">&lt;?php<br>
+        ...<br>
+        for ($i = 0; $i &lt; $n; $i++) { ?&gt; &nbsp;&nbsp;&nbsp;&#8678; close PHP tag<br>
+        &lt;p&gt;Hello, World!&lt;/p&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#8678; HTML to be repeated<br>
+        &lt;?php } ?&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#8678; a new PHP tag to end the loop</ul>
+        <p><strong>PRO:</strong> If you bring the HTML out of the echo statement, it is easier for your IDE to be sure that your HTML syntax is correct. </p>
+        <p><strong>CON:</strong> Code written like this can be really hard to read.</p>
+        <li><strong>RECOMMENDED: Separating PHP and HTML </strong></li>
+        Another alternative is to maintain a strict separation between the PHP PROCESSING and the HTML OUTPUT. In this case, you would have a block of PHP at the top of the page that retrieves the parameters and processes the outputs, storing them in temporary variables.
+        <p>Then the HTML portion of the code will only need PHP expression tags to place the variables where they need to go. Examples can be found in <strong>helloRepeat3.php</strong> and <strong>helloClient3.php</strong> the examples on SLATE. They’re pretty self explanatory.</p>
+        <div>Let's run and examine:
+        <ul><li><a href="helloRepeat.php
+        " target="_blank">helloRepeat.php</a></li>
+        <li><a href="helloRepeat2.php" target="_blank">helloRepeat2.php</a></li>
+        <li><a href="helloRepeat3.php" target="_blank">helloRepeat3.php</a></li>
+        </ul></div>
+        <p style="color:red;">Let's create a HTML program to call the above php programs.</p>
+        <li><strong>An Aside: Parameters with Many Values</strong></li>
+        Check boxes are typically used to send multiple parameters under the same name. For example, the code below will cause between 0 and 4 parameters to be sent to the server, each named activity.<br><br>
+        <ul class="codestyle">
+        &lt;input type="checkbox" name="<span style="color:red;">activity</span>" value="tennis"&gt;tennis<br> 
+        &lt;input type="checkbox" name="<span style="color:red;">activity</span>" value="hockey"&gt;hockey<br>
+        &lt;input type="checkbox" name="<span style="color:red;">activity</span>" value="bowling"&gt;bowling<br>
+        &lt;input type="checkbox" name="<span style="color:red;">activity</span>" value="darts"&gt;darts</ul>
+        <p>If the user checks both “tennis” and “hockey” the parameter string will be:</p>
+        <ul class="codestyle">target.php?activity=tennis&activity=hockey</ul>
+        <p>In the PHP program receiving the data, $_GET["activity"] will hold either “tennis” or “hockey”, <strong>but not both</strong>.</p>
+        <p>To get around this, you have to name the check boxes in a way that signals to PHP that they should be stored in an array. You do that by adding [] to the end of the name attribute, like this:</p>
+        <ul class="codestyle">
+        &lt;input type="checkbox" name="<span style="color:red;">activity[]</span>" value="tennis"&gt;tennis<br> 
+        &lt;input type="checkbox" name="<span style="color:red;">activity[]</span>" value="hockey"&gt;hockey<br>
+        &lt;input type="checkbox" name="<span style="color:red;">activity[]</span>" value="bowling"&gt;bowling<br>
+        &lt;input type="checkbox" name="<span style="color:red;">activity[]</span>" value="darts"&gt;darts</ul>
+        <p>On the server side, this will come through as an array parameter. So $_GET["activity"] will be an array with the indices 0, 1, and so on set to the values the user checked.</p>
+        <p>To find out how many values the user checked, use the global count() function to retrieving the size of the array:</p>
+        <ul class="codestyle">count($_GET["activity"])</ul>
+        <p>To access a particular array element, specify the numeric index in square brackets:</p>
+        <ul><span class="codestyle">$_GET["activity"][0]&nbsp;&nbsp;&#8678; </span>return the first item in the array as a string.</ul><br>
+        <div>
+        <ul><li><a href="formsphp.html
+        " target="_blank">formsphp.html</a></li>
+        <li><a href="form.php" target="_blank">form.php</a></li>
+        </ul></div>
+        
+    </ul>
+</div>
+</body>
+</html>
